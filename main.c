@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 #if defined(OPT)
     hash_table *my_hash_table;
-    my_hash_table = create_hash_table(7000000);
+    my_hash_table = create_hash_table();
 #endif
 
 #if defined(__GNUC__)
@@ -78,11 +78,11 @@ int main(int argc, char *argv[])
 #if !defined(OPT)
     assert(findName(input, e) &&
            "Did you implement findName() in " IMPL "?");
-    assert(0 == strcmp(findName(input, e)->lastName, "zyxel"));
+    assert(0 == strcmp(findName(input, e)->lastName, input));
 #else
     assert(findName(input, my_hash_table) &&
            "Did you implement findName() in " IMPL "?");
-    assert(0 == strcmp(findName(input, my_hash_table)->lastName, "zyxel"));
+    assert(0 == strcmp(findName(input, my_hash_table)->lastName, input));
 #endif
 
 #if defined(__GNUC__)

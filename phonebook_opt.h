@@ -5,6 +5,8 @@
 
 #define OPT 1
 
+#define SIZE 102400
+
 typedef struct __PHONE_BOOK_DETAILS {
     char firstName[16];
     char email[16];
@@ -25,10 +27,11 @@ typedef struct __PHONE_BOOK_ENTRY {
 } entry;
 
 typedef struct _hash_table {
-    int size;
     entry **table;
 } hash_table;
 
+unsigned int hash(hash_table *hashtable , char *str);
+hash_table *create_hash_table();
 entry *findName(char *lastname, hash_table *hashtable);
 void append(char *lastName, hash_table *hashtable);
 

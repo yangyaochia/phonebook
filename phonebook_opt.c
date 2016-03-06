@@ -9,23 +9,21 @@ unsigned int hash(hash_table *hashtable , char *str)
     unsigned int hash_value = 0;
     while(*str)
         hash_value = (hash_value << 5) - hash_value + *str++;
-    return (hash_value % hashtable->size);
+    return (hash_value % SIZE);
 }
 
-hash_table *create_hash_table(int size)
+hash_table *create_hash_table()
 {
     int i;
     hash_table *new_table;
-    if(size<1)	return NULL;
 
     /* Allocate memory for hashtable*/
     new_table = malloc(sizeof(hash_table));
-    new_table->table = malloc(sizeof(entry *) * size );
+    new_table->table = malloc(sizeof(entry *) * SIZE );
 
     /* Initialize the elements of the table */
-    for(i=0; i<size; i++)
+    for(i=0; i<SIZE; i++)
         new_table->table[i] = NULL;
-    new_table->size = size;
 
     return new_table;
 }
@@ -51,11 +49,6 @@ void append(char *lastName,hash_table *hashtable)
     entry *new_entry;
     unsigned int hash_value = hash(hashtable , lastName);
 
-    /* Check does the lastName already exist or not */
-    new_entry = findName(lastName , hashtable);
-    if(new_entry != NULL) return;
-
-    new_entry = NULL;
     new_entry = (entry *) malloc(sizeof(entry));
 
     /* Insert into table list */
