@@ -8,7 +8,7 @@ unsigned int hash(hash_table *hashtable , char *str)
 {
     unsigned int hash_value = 0;
     while(*str)
-        hash_value = (hash_value << 5) - hash_value + *str++;
+        hash_value = (hash_value << 5) - hash_value + (*str++);
     return (hash_value % SIZE);
 }
 
@@ -52,7 +52,7 @@ void append(char *lastName,hash_table *hashtable)
     new_entry = (entry *) malloc(sizeof(entry));
 
     /* Insert into table list */
-    memcpy(new_entry->lastName , lastName , strlen(lastName));
+    strcpy(new_entry->lastName , lastName);
     new_entry->pNext = hashtable->table[hash_value];
     hashtable->table[hash_value] = new_entry;
 }

@@ -17,13 +17,12 @@ typedef struct __PHONE_BOOK_DETAILS {
     char city[16];
     char state[2];
     char zip[5];
-    struct __PHONE_BOOK_DETAILS *Next;
 } Details;
 
 typedef struct __PHONE_BOOK_ENTRY {
     char lastName[MAX_LAST_NAME_SIZE];
     struct __PHONE_BOOK_ENTRY *pNext;
-    Details **details;
+    Details *details;
 } entry;
 
 typedef struct _hash_table {
