@@ -36,17 +36,28 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+// initialisation of head pointer for either hashtable linked list or singly lined list
+
+#if defined (OPT) // append the lastname into an hash table linked list
+
+    entry *pHead[TABLE_SIZE],*e[TABLE_SIZE];    //malloc pHead[],use e[] to point pHead[]
+    printf("size of entry : %lu bytes\n", sizeof(entry));
+
+    for(i=0; i<TABLE_SIZE; ++i) {
+        //why?
+        pHead[i]=(entry *) malloc(sizeof(entry));
+        e[i]=pHead[i];
+        e[i]->pNext=NULL;
+    }
+#else // original file 
     /* build the entry */
     entry *pHead, *e;
     pHead = (entry *) malloc(sizeof(entry));
     printf("size of entry : %lu bytes\n", sizeof(entry));
     e = pHead;
     e->pNext = NULL;
-
-#if defined(OPT)
-    hash_table *my_hash_table;
-    my_hash_table = create_hash_table();
 #endif
+
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
@@ -57,8 +68,8 @@ int main(int argc, char *argv[])
             i++;
         line[i - 1] = '\0';
         i = 0;
-#if defined(OPT)
-        append(line , my_hash_table);
+#if defined (OPT)
+        append(line, e);
 #else
         e = append(line, e);
 #endif
@@ -69,41 +80,34 @@ int main(int argc, char *argv[])
     /* close file as soon as possible */
     fclose(fp);
 
+#if defined (OPT)
+    for(size_t i = 0 ; i < TABLE_SIZE; i++) {
+        e[i] = pHead[i];
+    }
+#else
     e = pHead;
+#endif
+
 
     /* the givn last name to find */
     char input[MAX_LAST_NAME_SIZE] = "zyxel";
-    e = pHead;
+    //e = pHead;
 
-#if !defined(OPT)
     assert(findName(input, e) &&
            "Did you implement findName() in " IMPL "?");
-    assert(0 == strcmp(findName(input, e)->lastName, input));
-#else
-    assert(findName(input, my_hash_table) &&
-           "Did you implement findName() in " IMPL "?");
-    assert(0 == strcmp(findName(input, my_hash_table)->lastName, input));
-#endif
+    assert(0 == strcmp(findName(input, e)->lastName, "zyxel"));
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
 #endif
-
     /* compute the execution time */
-#if defined(OPT)
     clock_gettime(CLOCK_REALTIME, &start);
-    findName(input , my_hash_table);
+    findName(input, e);
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time2 = diff_in_second(start, end);
-#else
-    clock_gettime(CLOCK_REALTIME, &start);
-    findName(input , e);
-    clock_gettime(CLOCK_REALTIME, &end);
-    cpu_time2 = diff_in_second(start, end);
-#endif
 
     FILE *output;
-#if defined(OPT)
+#if defined(HASH)
     output = fopen("opt.txt", "a");
 #else
     output = fopen("orig.txt", "a");
@@ -114,8 +118,18 @@ int main(int argc, char *argv[])
     printf("execution time of append() : %lf sec\n", cpu_time1);
     printf("execution time of findName() : %lf sec\n", cpu_time2);
 
-    if (pHead->pNext) free(pHead->pNext);
+#if defined (OPT)
+    for(size_t i = 0; i < TABLE_SIZE; i++) {
+        if(pHead[i]->pNext) {
+            freeList(pHead[i]);
+            pHead[i] = NULL;
+        }
+    }
+#else
+    if (pHead->pNext)
+        free(pHead->pNext);
     free(pHead);
+#endif
 
     return 0;
 }
